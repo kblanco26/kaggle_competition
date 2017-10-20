@@ -21,7 +21,7 @@ testing <- train[train$Embarked == "",]
     geom_bar()
  
  ggplot(data=train, aes(fill=Pclass, x=Embarked)) +
-   geom_bar()
+   geom_histogram(position="dodge")
  
 
  
