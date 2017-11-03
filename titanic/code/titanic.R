@@ -18,9 +18,20 @@ library(tidyverse)
 library(gridExtra)
 library(modelr)
 library(broom)
-library(randomForest)
-library(mice)
 library(VIM)
+library(randomForest) # Random Forest
+library(mice) # Imputation
+library(e1071) # Support Vector Machine
+
+###################
+#### Functions ####
+###################
+
+# Root mean square error
+rmse <- function(error)
+{
+  sqrt(mean(error^2))
+}
 
 ##################
 #### Get Data ####
