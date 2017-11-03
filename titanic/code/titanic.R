@@ -199,3 +199,13 @@ errors_svm <- data.frame(actual = training_set$survived,
                          predicted = predicted_svm,
                          error = training_set$survived == predicted_svm)
 errors_svm %>% group_by(actual, error) %>% summarise (n = n()) %>% mutate(freq = n / sum(n))
+
+########################
+#### Export Results ####
+########################
+final_predictions <- data.frame(
+  PassengerId = test_set$passengerid,
+  Survived = predict(titanic_rf, newdata = test_set)
+  )
+final_predictions$Survived <- ifelse(final_predictions$Survived == 'No', 0, 1)
+write.csv(x = final_predictions, file = '~/Documents/GitHub/kaggle_competition/titanic/data/submission_rf.csv', row.names = FALSE)
