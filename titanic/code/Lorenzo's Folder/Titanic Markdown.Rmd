@@ -1,0 +1,53 @@
+---
+title: "Titanic Data"
+author: "Lorenzo Tapia"
+date: "10/23/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r preamble, results='hide', echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+## Exploratory Data Analysis
+
+The first step to analysizing your data is to make sure your data is as good as you think it is. This means looking at your raw data, how it imports into R, if there are missing or incorrect values, renaming varibles or observations to something more meaningful, and many other checks before you test your methods out.
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars, results='hide', echo=TRUE}
+setwd("~/Documents/GitHub/kaggle_competition/titanic/data")
+test <- read.csv(file="test.csv", stringsAsFactors = FALSE)
+train <- read.csv(file="train.csv",stringsAsFactors = FALSE)
+```
+
+### Looking At The Raw Data
+
+Taking a look at the column names can give a quick indication of what kinds of data has been collected. We also look at example rows to get an idea of what the data look like without revealing the entire dataset. Summary information gives us a feel for the distribution of data as well as the amount of missing data in our dataset.
+```{r trainnames}
+names(train)
+```
+
+```{r trainhead}
+head(train)
+```
+
+```{r trainsummary}
+summary(train)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
