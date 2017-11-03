@@ -163,25 +163,39 @@ variable_importance[order(variable_importance$mean_decrease_gini,decreasing = TR
 #############################
 #### Logistic Regression ####
 #############################
-titanic_lr <- glm(formula = survived ~ pclass + sex + age + fare + embarked + family_size, family = binomial(link = "logit"), 
+titanic_lr <- glm(formula = survived ~ pclass:sex + age + fare + embarked + family_size, family = binomial(link = "logit"), 
                   data = training_set)
 summary(titanic_lr)
 
 # k-fold cross validation
 folds <- crossv_kfold(training_set, k = 10) # split data into 10 folds
-folds <- folds %>% mutate(model = map(train, ~ glm(formula = survived ~ pclass + sex + age + fare + embarked + family_size, family = binomial(link = "logit"), data = .)))
+folds <- folds %>% mutate(model = map(train, ~ glm(formula = survived ~ pclass:sex + age + fare + embarked + family_size, family = binomial(link = "logit"), data = .)))
 
 # Logistic regression model built on first split of training and test set
 folds$model[[1]] %>% summary()
 
 # Test k models on test sets
-predicted <- folds %>% unnest(map2(model, test, ~ augment(.x, newdata = .y, type.predict = "response")))
-predicted
+predicted_lg <- folds %>% unnest(map2(model, test, ~ augment(.x, newdata = .y, type.predict = "response")))
+predicted_lg
 
 # Translate logisitic regression probabilities to indicator variables for survival and death
-predicted$.fitted <- ifelse(test = round(predicted$.fitted) == 0, "No", "Yes")
-predicted <- predicted %>% 
+predicted_lg$.fitted <- ifelse(test = round(predicted_lg$.fitted) == 0, "No", "Yes")
+predicted_lg <- predicted_lg %>% 
   mutate(residual = .fitted == survived)
 # Error rate
-predicted %>% group_by(residual) %>% summarise (n = n()) %>%
+predicted_lg %>% group_by(residual) %>% summarise (n = n()) %>%
   mutate(freq = n / sum(n))
+
+################################
+#### Support Vector Machine ####
+################################
+prediction_variables_svm <- c("pclass", "sex", "age", "fare", "embarked", "family_size")
+titanic_svm <- svm(formula = survived ~ pclass + sex + age + fare + embarked + family_size, family = binomial(link = "logit"), 
+                  data = training_set)
+summary(titanic_svm)
+predicted_svm <- predict(titanic_svm, training_set[,names(training_set) %in% prediction_variables_svm])
+
+errors_svm <- data.frame(actual = training_set$survived,
+                         predicted = predicted_svm,
+                         error = training_set$survived == predicted_svm)
+errors_svm %>% group_by(actual, error) %>% summarise (n = n()) %>% mutate(freq = n / sum(n))
